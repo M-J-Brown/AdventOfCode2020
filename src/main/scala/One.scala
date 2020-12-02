@@ -1,5 +1,3 @@
-import java.io.File
-
 import cats.effect.{ContextShift, IO}
 
 object One extends Day {
@@ -16,20 +14,20 @@ object One extends Day {
     } yield a * b * c).distinct
   }.flatMap {
     case head :: Nil => IO(head.toString)
-    case head :: tail =>   IO.raiseError(new RuntimeException(s"Many answers! ${head :: tail}"))
+    case head :: tail => IO.raiseError(new RuntimeException(s"Many answers! ${head :: tail}"))
     case Nil => IO.raiseError(new RuntimeException("No answers!"))
   }
 
   override def calculatePartTwo(input: List[Int])(implicit cs: ContextShift[IO]): IO[String] = IO {
     val (big, small) = input.partition(_ > 1010)
-    (for {
+    for {
       b <- big
       s <- small
       if b + s == 2020
-    } yield b * s)
+    } yield b * s
   }.flatMap {
     case head :: Nil => IO(head.toString)
-    case head :: tail =>   IO.raiseError(new RuntimeException(s"Many answers! ${head :: tail}"))
+    case head :: tail => IO.raiseError(new RuntimeException(s"Many answers! ${head :: tail}"))
     case Nil => IO.raiseError(new RuntimeException("No answers!"))
   }
 
