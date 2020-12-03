@@ -1,3 +1,5 @@
+package days
+
 import cats.data.State
 import cats.effect.{ContextShift, IO}
 import cats.implicits._

@@ -1,9 +1,10 @@
-import java.io._
+package days
 
-import cats.effect.{IO, _}
+import cats.effect.{Blocker, ContextShift, IO, Resource}
 import cats.implicits._
-
 import scala.jdk.CollectionConverters._
+
+import java.io.{BufferedReader, File, FileReader}
 
 trait Day {
   val name: String
@@ -29,7 +30,7 @@ trait Day {
       lines <- readLinesFromFile(partOneFile)
       parsed <- lines.map(safeParse(_, parsePartOne)).sequence
       res <- calculatePartOne(parsed).attempt.flatMap {
-        case Left(err) =>  IO.raiseError(new RuntimeException(s"Error calculating with $parsed for day $name part one: $err"))
+        case Left(err) => IO.raiseError(new RuntimeException(s"Error calculating with $parsed for day $name part one: $err"))
         case Right(value) => IO.pure(value)
       }
     } yield res
@@ -39,13 +40,13 @@ trait Day {
       lines <- readLinesFromFile(partTwoFile)
       parsed <- lines.map(safeParse(_, parsePartTwo)).sequence
       res <- calculatePartTwo(parsed).attempt.flatMap {
-        case Left(err) =>  IO.raiseError(new RuntimeException(s"Error calculating with $parsed for day $name part two: $err"))
+        case Left(err) => IO.raiseError(new RuntimeException(s"Error calculating with $parsed for day $name part two: $err"))
         case Right(value) => IO.pure(value)
       }
     } yield res
 
   def safeParse[A](string: String, parseFn: String => IO[A]): IO[A] = parseFn(string).attempt.flatMap {
-    case Left(err) =>  IO.raiseError(new RuntimeException(s"Error parsing input $string for day $name: $err"))
+    case Left(err) => IO.raiseError(new RuntimeException(s"Error parsing input $string for day $name: $err"))
     case Right(value) => IO.pure(value)
   }
 
@@ -59,7 +60,7 @@ trait Day {
       Resource.fromAutoCloseableBlocking(blocker)(IO(new BufferedReader(new FileReader(file))))
 
     reader(file).use(br => readAllLines(br)).attempt.flatMap {
-      case Left(err) =>  IO.raiseError(new RuntimeException(s"Error reading file $file for day $name: $err"))
+      case Left(err) => IO.raiseError(new RuntimeException(s"Error reading file $file for day $name: $err"))
       case Right(value) => IO.pure(value)
     }
   }

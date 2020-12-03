@@ -1,4 +1,7 @@
+package days
+
 import cats.effect.{ContextShift, IO}
+import cats.implicits._
 
 object One extends Day {
   override val name: String = "one"
