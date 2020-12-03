@@ -3,19 +3,20 @@ package days
 import cats.data.State
 import cats.effect.{ContextShift, IO}
 import cats.implicits._
+import main.Main.Logger
 
-object Two extends Day {
-  override val name: String = "two"
+class Two(implicit val cs: ContextShift[IO], val log: Logger[IO]) extends Day {
+  override implicit val name: DayName = DayName("two")
   override type IN1 = (Range, Char, String)
   override type IN2 = (Int, Int, Char, String)
 
-  override def calculatePartOne(input: List[(Range, Char, String)])(implicit cs: ContextShift[IO]): IO[String] = IO {
+  override def calculatePartOne(input: List[(Range, Char, String)]): IO[String] = IO {
     input.filter { case (range, char, pass) =>
       range.contains(pass.count(_ == char))
     }
   }.map(_.size.toString)
 
-  override def calculatePartTwo(input: List[(Int, Int, Char, String)])(implicit cs: ContextShift[IO]): IO[String] = IO {
+  override def calculatePartTwo(input: List[(Int, Int, Char, String)]): IO[String] = IO {
     input.filter { case (first, second, char, pass) =>
       val allOcurrences = pass.zipWithIndex.collect {
         case (c, i) if c == char => i + 1

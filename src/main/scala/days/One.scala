@@ -2,13 +2,14 @@ package days
 
 import cats.effect.{ContextShift, IO}
 import cats.implicits._
+import main.Main.Logger
 
-object One extends Day {
-  override val name: String = "one"
+class One(implicit val cs: ContextShift[IO], val log: Logger[IO]) extends Day {
+  override implicit val name: DayName = DayName("one")
   override type IN1 = Int
   override type IN2 = Int
 
-  override def calculatePartOne(input: List[Int])(implicit cs: ContextShift[IO]): IO[String] = IO {
+  override def calculatePartOne(input: List[Int]): IO[String] = IO {
     (for {
       a <- input
       b <- input
@@ -17,11 +18,11 @@ object One extends Day {
     } yield a * b * c).distinct
   }.flatMap {
     case head :: Nil => IO(head.toString)
-    case head :: tail => IO.raiseError(new RuntimeException(s"Many answers! ${head :: tail}"))
-    case Nil => IO.raiseError(new RuntimeException("No answers!"))
+    case head :: tail => log.errorAndThrow(s"Many answers! ${head :: tail}")
+    case Nil => log.errorAndThrow("No answers!")
   }
 
-  override def calculatePartTwo(input: List[Int])(implicit cs: ContextShift[IO]): IO[String] = IO {
+  override def calculatePartTwo(input: List[Int]): IO[String] = IO {
     val (big, small) = input.partition(_ > 1010)
     for {
       b <- big
@@ -30,8 +31,8 @@ object One extends Day {
     } yield b * s
   }.flatMap {
     case head :: Nil => IO(head.toString)
-    case head :: tail => IO.raiseError(new RuntimeException(s"Many answers! ${head :: tail}"))
-    case Nil => IO.raiseError(new RuntimeException("No answers!"))
+    case head :: tail => log.errorAndThrow(s"Many answers! ${head :: tail}")
+    case Nil => log.errorAndThrow("No answers!")
   }
 
   override def parsePartOne: String => IO[Int] = s => IO(s.toInt)
