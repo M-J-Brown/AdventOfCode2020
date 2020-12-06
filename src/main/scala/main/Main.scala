@@ -39,5 +39,5 @@ object Main extends IOApp {
     days.map(day).sequence.as(ExitCode.Success)
   }
 
-  val days: List[Day] = List(new One, new Two, new Three, new Four, new Five)
+  val days: List[Day] = List(new One, new Two, new Three, new Four, new Five, new Six)
 }
