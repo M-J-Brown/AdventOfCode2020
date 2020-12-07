@@ -32,10 +32,8 @@ class Six(implicit val cs: ContextShift[IO], val log: Logger[IO]) extends Day {
     }
   }
     .map { case (answers, last) => last :: answers }
-    .map(_.map(_.map(_.toSet).fold[Set[Char]](allLetters)(_ intersect _)).map(_.size))
+    .map(_.map(_.map(_.toSet).reduce(_ intersect _)).map(_.size))
     .map(_.sum.toString)
-
-  private val allLetters: Set[Char] = "abcdefghijklmnopqrstuvwxyz".toSet
 
   override def parsePartOne: String => IO[String] = IO.pure
 
