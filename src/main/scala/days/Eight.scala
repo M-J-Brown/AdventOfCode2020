@@ -47,9 +47,6 @@ class Eight(implicit val cs: ContextShift[IO], val log: Logger[IO]) extends Day 
 
   override def parsePartTwo: String => IO[Command] = parsePartOne
 
-  /**
-   * Returns either a Left(
-   */
   def run(program: List[Command]): IO[ProgramResult] = {
     val indexed = program.toIndexedSeq
 
@@ -57,7 +54,7 @@ class Eight(implicit val cs: ContextShift[IO], val log: Logger[IO]) extends Day 
     def go(idx: Int, acc: Int, visited: List[Int]): ProgramResult = {
       if (idx == indexed.size)
         ProgramResult.Success(acc)
-      else if (visited.toSet.contains(idx))
+      else if (visited.contains(idx))
         ProgramResult.InfiniteLoop(acc, idx :: visited)
       else
         indexed(idx) match {

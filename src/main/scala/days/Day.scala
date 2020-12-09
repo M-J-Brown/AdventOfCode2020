@@ -29,8 +29,9 @@ trait Day {
 
   def parsePartTwo: String => IO[IN2]
 
-  lazy val partOneFile = new File(s"C:\\dev\\AdventOfCode2020\\src\\main\\resources\\${name}_1.txt")
-  lazy val partTwoFile = new File(s"C:\\dev\\AdventOfCode2020\\src\\main\\resources\\${name}_2.txt")
+  private final val prefix = "C:\\dev\\AdventOfCode2020\\src\\main\\resources\\"
+  def partOneFile: File = new File(s"$prefix$name.txt")
+  def partTwoFile: File = partOneFile
 
   def one: IO[String] =
     for {
