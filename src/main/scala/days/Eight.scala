@@ -2,25 +2,12 @@ package days
 
 import cats.effect.{ContextShift, IO}
 import cats.implicits._
+import days.Eight.Command
 import main.Main.Logger
 
 import scala.annotation.tailrec
 import scala.util.Try
 
-sealed trait Command
-object Command {
-  case class NOP(unused: Int) extends Command
-  case class JMP(int: Int) extends Command
-  case class ACC(int: Int) extends Command
-
-  def parse(s: String): IO[Command] = s.split(' ') match {
-    case Array("nop", i) => IO.fromTry(Try(NOP(i.toInt)))
-    case Array("jmp", i) => IO.fromTry(Try(JMP(i.toInt)))
-    case Array("acc", i) => IO.fromTry(Try(ACC(i.toInt)))
-    case other => IO.raiseError(new IllegalArgumentException(s"What is $s? (${other.mkString("Array(", ", ", ")")})"))
-  }
-
-}
 class Eight(implicit val cs: ContextShift[IO], val log: Logger[IO]) extends Day {
   override implicit val name: DayName = DayName("eight")
   override type IN1 = Command
@@ -71,6 +58,22 @@ class Eight(implicit val cs: ContextShift[IO], val log: Logger[IO]) extends Day 
   object ProgramResult {
     case class Success(acc: Int) extends ProgramResult
     case class InfiniteLoop(acc: Int, visited: List[Int]) extends ProgramResult
+  }
+}
+
+object Eight {
+  sealed trait Command
+  object Command {
+    case class NOP(unused: Int) extends Command
+    case class JMP(int: Int) extends Command
+    case class ACC(int: Int) extends Command
+
+    def parse(s: String): IO[Command] = s.split(' ') match {
+      case Array("nop", i) => IO.fromTry(Try(NOP(i.toInt)))
+      case Array("jmp", i) => IO.fromTry(Try(JMP(i.toInt)))
+      case Array("acc", i) => IO.fromTry(Try(ACC(i.toInt)))
+      case other => IO.raiseError(new IllegalArgumentException(s"What is $s? (${other.mkString("Array(", ", ", ")")})"))
+    }
   }
 }
 
